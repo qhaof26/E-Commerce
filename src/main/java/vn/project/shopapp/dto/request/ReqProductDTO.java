@@ -1,4 +1,4 @@
-package vn.project.shopapp.domain.request;
+package vn.project.shopapp.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;

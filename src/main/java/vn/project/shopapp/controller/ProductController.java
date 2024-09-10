@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vn.project.shopapp.service.UploadService;
-import vn.project.shopapp.domain.request.ReqProductDTO;
+import vn.project.shopapp.dto.request.ReqProductDTO;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -3,7 +3,7 @@ package vn.project.shopapp.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.project.shopapp.domain.request.ReqCategoryDTO;
+import vn.project.shopapp.dto.request.ReqCategoryDTO;
 
 @RestController
 @RequestMapping("${api.prefix}/categories")

@@ -1,4 +1,4 @@
-package vn.project.shopapp.domain.request.user;
+package vn.project.shopapp.dto.request.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;

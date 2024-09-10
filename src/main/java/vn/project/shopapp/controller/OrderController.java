@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.project.shopapp.domain.request.ReqOrderDTO;
+import vn.project.shopapp.dto.request.ReqOrderDTO;
 
 @RestController
 @RequestMapping("${api.prefix}/orders")
@@ -17,10 +17,10 @@ public class OrderController {
         return ResponseEntity.ok(String.format("List Orders: pageNo = %d, pageSize = %d", pageNo, pageSize));
     }
 
-    @GetMapping("/{user_id}")
-    public ResponseEntity<?> getByUserId(@PathVariable("user_id") int user_id){
+    @GetMapping("/{order_id}")
+    public ResponseEntity<?> getById(@PathVariable("order_id") int order_id){
         try{
-            return ResponseEntity.ok("Get order by user id: " + user_id);
+            return ResponseEntity.ok("Get order by user id: " + order_id);
         } catch (Exception exception){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Get order fail");
         }
