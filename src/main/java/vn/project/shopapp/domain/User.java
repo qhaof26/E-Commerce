@@ -1,10 +1,7 @@
 package vn.project.shopapp.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -12,6 +9,7 @@ import java.time.LocalDate;
 @Table(name = "users")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends AbstractEntity{
@@ -31,16 +29,17 @@ public class User extends AbstractEntity{
     @Column(name = "password", length = 200, nullable = false)
     private String password;
 
+    @Column(name = "is_active", nullable = false)
     private Boolean active;
 
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
     @Column(name = "facebook_account_id")
-    private LocalDate facebookAccountId;
+    private Integer facebookAccountId;
 
     @Column(name = "google_account_id")
-    private LocalDate googleAccountId;
+    private Integer googleAccountId;
 
     @ManyToOne
     @JoinColumn(name = "role_id")

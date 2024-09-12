@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import vn.project.shopapp.service.UploadService;
+import vn.project.shopapp.service.impl.UploadService;
 import vn.project.shopapp.dto.request.ReqProductDTO;
 
 import java.io.IOException;

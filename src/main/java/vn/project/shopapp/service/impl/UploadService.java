@@ -1,4 +1,4 @@
-package vn.project.shopapp.service;
+package vn.project.shopapp.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
