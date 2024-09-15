@@ -1,5 +1,6 @@
 package vn.project.shopapp.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import vn.project.shopapp.domain.User;
@@ -12,7 +13,9 @@ import vn.project.shopapp.service.IUserService;
 public class UserService implements IUserService {
     private final RoleService roleService;
     private final UserRepository userRepository;
+
     @Override
+    @Transactional
     public User create(ReqUserDTO userDTO) {
         User user = User.builder()
                 .fullName(userDTO.getFullName())

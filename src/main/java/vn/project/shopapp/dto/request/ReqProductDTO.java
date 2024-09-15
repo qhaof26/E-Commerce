@@ -1,10 +1,7 @@
 package vn.project.shopapp.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReqProductDTO implements Serializable {
-    @NotBlank(message = "Name is required")
+    //@NotNull(message = "Name is required")
     @Size(min = 3, max = 200, message = "Name must be between 3 and 200 characters")
     private String name;
 
@@ -30,7 +27,7 @@ public class ReqProductDTO implements Serializable {
     private String description;
 
     @JsonProperty("category_id")
-    private Integer categoryId;
+    private Long categoryId;
 
-    private List<MultipartFile> files;
+    //private List<MultipartFile> files;
 }

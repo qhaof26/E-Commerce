@@ -20,16 +20,20 @@ public class UploadService {
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
         // Thêm UUID vào trước tên file để đảm bảo tên file là duy nhất
         String uniqueFilename = System.currentTimeMillis() + "_" + filename;
-        // Đường dẫn đến thư mục mà bạn muốn lưu file
-        Path uploadDir = Paths.get("uploads");
-        // Kiểm tra và tạo thư mục nếu nó không tồn tại
-        if (!Files.exists(uploadDir)) {
-            Files.createDirectories(uploadDir);
+        try{
+            // Đường dẫn đến thư mục mà bạn muốn lưu file
+            Path uploadDir = Paths.get("uploads");
+            // Kiểm tra và tạo thư mục nếu nó không tồn tại
+            if (!Files.exists(uploadDir)) {
+                Files.createDirectories(uploadDir);
+            }
+            // Đường dẫn đầy đủ đến file
+            Path destination = Paths.get(uploadDir.toString(), uniqueFilename);
+            // Sao chép file vào thư mục đích
+            Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException exception){
+            exception.printStackTrace();
         }
-        // Đường dẫn đầy đủ đến file
-        Path destination = Paths.get(uploadDir.toString(), uniqueFilename);
-        // Sao chép file vào thư mục đích
-        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
         return uniqueFilename;
     }
 }
