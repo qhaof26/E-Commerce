@@ -1,8 +1,11 @@
 package vn.project.shopapp.controller;
 
+import com.github.javafaker.Faker;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,12 +14,15 @@ import org.springframework.web.multipart.MultipartFile;
 import vn.project.shopapp.domain.Product;
 import vn.project.shopapp.domain.ProductImage;
 import vn.project.shopapp.dto.request.ReqProductImageDTO;
+import vn.project.shopapp.dto.response.PageResponse;
+import vn.project.shopapp.dto.response.ProductResponse;
 import vn.project.shopapp.dto.response.ResponseData;
 import vn.project.shopapp.dto.response.ResponseError;
 import vn.project.shopapp.service.impl.ProductService;
 import vn.project.shopapp.service.impl.UploadService;
 import vn.project.shopapp.dto.request.ReqProductDTO;
 import vn.project.shopapp.util.constant.AppConst;
+import vn.project.shopapp.util.mapper.ProductMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,19 +34,30 @@ import java.util.List;
 @RequestMapping("${api.prefix}/products")
 public class ProductController {
 
+    private final ProductMapper productMapper;
     private final UploadService uploadService;
     private final ProductService productService;
 
     // http://localhost:8080/api/v1/products
     @GetMapping("")
-    public ResponseData<?> getAllProduct(
+    public ResponseData<PageResponse<?>> getAllProduct(
             @RequestParam("pageNo") int pageNo,
             @RequestParam("pageSize") int pageSize){
         try{
-            PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
-            return new ResponseData<>(HttpStatus.OK.value(), "Get list product success", productService.getAll(pageRequest));
+            PageResponse<?> products = productService.getAll(pageNo, pageSize);
+            return new ResponseData<>(HttpStatus.OK.value(), "Get list product successfully.", products);
         } catch (Exception exception){
             return new ResponseError(HttpStatus.NO_CONTENT.value(), "Get list product failed");
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseData<ProductResponse> getById(@PathVariable long id){
+        try{
+            ProductResponse productResponse = productMapper.ProductToProductResponse(productService.getById(id));
+            return new ResponseData<>(HttpStatus.OK.value(), "Get product successfully.", productResponse);
+        } catch (Exception exception){
+            return new ResponseError(HttpStatus.NO_CONTENT.value(), "Get product failed.");
         }
     }
 
@@ -93,8 +110,14 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateProduct(@PathVariable long id){
-        return ResponseEntity.ok("updated success id " + id);
+    public ResponseData<Long> updateProduct(@PathVariable long id,
+                                                @RequestBody ReqProductDTO productDTO){
+        try{
+            productService.update(id, productDTO);
+            return new ResponseData<>(HttpStatus.OK.value(), "Updated product successfully.", id);
+        } catch (Exception exception){
+            return new ResponseError(HttpStatus.BAD_REQUEST.value(), "Update product failed.");
+        }
     }
 
     @PatchMapping("/{id}")
@@ -103,7 +126,37 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProduct(@PathVariable long id){
-        return ResponseEntity.ok("Deleted success id " + id);
+    public ResponseData<?> deleteProduct(@PathVariable long id){
+        try{
+            Product product = productService.getById(id);
+            productService.deleteById(product.getId());
+            return new ResponseData<>(HttpStatus.OK.value(), "Deleted product.");
+        } catch (Exception exception){
+            return new ResponseError(HttpStatus.BAD_REQUEST.value(), "Delete product failed");
+        }
+    }
+
+    @PostMapping("/generateFakeProducts")
+    private ResponseEntity<String> generateFakeProducts(){
+        Faker faker = new Faker();
+        for(int i = 0; i < 5000; i++){
+            String productName = faker.commerce().productName();
+            if(productService.existsByName(productName)) {
+                continue;
+            }
+            ReqProductDTO productDTO = ReqProductDTO.builder()
+                    .name(productName)
+                    .price((float) faker.number().numberBetween(10000, 1000000))
+                    .description(faker.lorem().sentence())
+                    .thumbnail("")
+                    .categoryId((long) faker.number().numberBetween(4,6))
+                    .build();
+            try{
+                productService.create(productDTO);
+            } catch (Exception exception){
+                return ResponseEntity.badRequest().body(exception.getMessage());
+            }
+        }
+        return ResponseEntity.ok("Fake products created successfully !");
     }
 }

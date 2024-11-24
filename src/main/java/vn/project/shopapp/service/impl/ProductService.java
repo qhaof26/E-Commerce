@@ -5,12 +5,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.project.shopapp.domain.Category;
 import vn.project.shopapp.domain.Product;
 import vn.project.shopapp.domain.ProductImage;
 import vn.project.shopapp.dto.request.ReqProductImageDTO;
 import vn.project.shopapp.dto.request.ReqProductDTO;
+import vn.project.shopapp.dto.response.PageResponse;
+import vn.project.shopapp.dto.response.ProductResponse;
 import vn.project.shopapp.exception.InvalidParamException;
 import vn.project.shopapp.exception.ResourceNotFoundException;
 import vn.project.shopapp.repository.CategoryRepository;
@@ -18,7 +21,10 @@ import vn.project.shopapp.repository.ProductImageRepository;
 import vn.project.shopapp.repository.ProductRepository;
 import vn.project.shopapp.service.IProductService;
 import vn.project.shopapp.util.constant.AppConst;
+import vn.project.shopapp.util.mapper.ProductMapper;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,6 +35,7 @@ public class ProductService implements IProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final ProductImageRepository productImageRepository;
+    private final ProductMapper productMapper;
 
     @Override
     @Transactional
@@ -50,8 +57,25 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Page<Product> getAll(PageRequest pageRequest) {
-        return productRepository.findAll(pageRequest);
+    public PageResponse<?> getAll(int pageNo, int pageSize) {
+        int pageTemp = 0;
+        if(pageNo > 0){
+            pageTemp = pageNo - 1;
+        }
+        Pageable pageable = PageRequest.of(pageTemp, pageSize);
+        Page<Product> productPages = productRepository.findAll(pageable);
+        List<Product> products = productPages.getContent();
+        List<ProductResponse> productResponses = new ArrayList<>();
+        for(Product product : products){
+            productResponses.add(productMapper.ProductToProductResponse(product));
+        }
+
+        return PageResponse.builder()
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .totalPages(productPages.getTotalPages())
+                .data(productResponses)
+                .build();
     }
 
     @Override

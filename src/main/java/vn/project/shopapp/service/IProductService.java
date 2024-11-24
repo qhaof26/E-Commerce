@@ -9,12 +9,16 @@ import vn.project.shopapp.domain.Product;
 import vn.project.shopapp.domain.ProductImage;
 import vn.project.shopapp.dto.request.ReqProductDTO;
 import vn.project.shopapp.dto.request.ReqProductImageDTO;
+import vn.project.shopapp.dto.response.PageResponse;
+import vn.project.shopapp.dto.response.ProductResponse;
+
+import java.util.List;
 
 @Service
 public interface IProductService {
     Product create(ReqProductDTO productDTO);
     Product getById(long id);
-    Page<Product> getAll(PageRequest pageRequest);
+    PageResponse<?> getAll(int pageNo, int pageSize);
     Product update(long id, ReqProductDTO productDTO);
     void deleteById(long id);
     boolean existsByName(String name);
